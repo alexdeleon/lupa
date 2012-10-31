@@ -1,0 +1,2 @@
+REVIEWBOARD_URL = 'http://192.168.122.175/review-board'
+REPOSITORY = 'loib/webscraper'
