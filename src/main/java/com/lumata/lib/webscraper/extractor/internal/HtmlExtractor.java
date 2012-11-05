@@ -52,7 +52,7 @@ public class HtmlExtractor extends AbstractExtractor<WebContent> {
 	private static final String CONFIG_EXCLUDED_ELEMENTS = "excludedElements";
 	private static final String CONFIG_EXCLUDED_ELEMENTS_DEFAULT = "div[id~=.*nav.*], div[id~=.*bar.*], div[id~=.*share.*], div[class~=.*nav.*], div[class~=.*share.*], div[class~=.*tags.*], *[style~=.*display:none.*],div[id~=ad-area]";
 
-	private static final Pattern REFRESH_URL_PATTERN = Pattern.compile(".*URL=(.*)");
+	private static final Pattern REFRESH_URL_PATTERN = Pattern.compile(".*URL=(.*)", Pattern.CASE_INSENSITIVE);
 	private static final int BUFFER_2KB = 2048;
 	private static final String UTF8 = "utf8";
 
@@ -196,7 +196,7 @@ public class HtmlExtractor extends AbstractExtractor<WebContent> {
 				}
 
 				try {
-					Video embeddedVideo = extractVideoFromNodeList(content, scraper);
+					Video embeddedVideo = extractVideoFromSection(body, scraper);
 					if (embeddedVideo != null) {
 						webpage.addEmbeddedContent(embeddedVideo);
 					}
@@ -257,11 +257,18 @@ public class HtmlExtractor extends AbstractExtractor<WebContent> {
 		return builder.toString();
 	}
 
-	private Video extractVideoFromNodeList(Elements nodes, Scraper scraper) throws IOException, HttpException {
-		Element embedTag = nodes.select("embed[src*=www.youtube.com], iframe[src*=www.youtube.com]").first();
-		if (embedTag != null) {
-			return scraper.extractContentFromUrl(embedTag.absUrl("src"), Video.class);
-		} else {
+	private Video extractVideoFromSection(Element section, Scraper scraper) {
+		Element embedTag = section.select(
+				"embed[src*=youtube.com], iframe[src*=youtube.com], embed[src*=vimeo.com], iframe[src*=vimeo.com]")
+				.first();
+		return embedTag != null ? scrapVideoUrl(embedTag.absUrl("src"), scraper) : null;
+	}
+
+	private Video scrapVideoUrl(String videoUrl, Scraper scraper) {
+		try {
+			return scraper.extractContentFromUrl(videoUrl, Video.class);
+		} catch (Exception e) {
+			LOG.error("Exception while extracting videp from url {}", videoUrl, e);
 			return null;
 		}
 	}

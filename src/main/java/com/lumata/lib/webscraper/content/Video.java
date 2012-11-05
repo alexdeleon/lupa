@@ -18,4 +18,8 @@ public class Video extends WebContent {
 		return Type.VIDEO;
 	}
 
+	@Override
+	public String toString() {
+		return toStringHelper(this).toString();
+	}
 }
