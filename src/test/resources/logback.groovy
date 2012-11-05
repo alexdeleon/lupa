@@ -8,5 +8,5 @@ appender("STDOUT", ConsoleAppender) {
 	pattern = "%d [%thread] %-5level %logger{35} [%file:%line] - %msg %n"
   }
 }
-logger("com.lumata.lib.webscraper", DEBUG, ["STDOUT"])
+logger("com.lumata.lib.webscraper", DEBUG)
 root(ERROR, ["STDOUT"])

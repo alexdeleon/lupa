@@ -2,6 +2,7 @@ package com.lumata.lib.webscraper.extractor.internal;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -9,7 +10,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
@@ -24,8 +27,11 @@ import com.google.common.net.MediaType;
 import com.lumata.lib.webscraper.HttpService;
 import com.lumata.lib.webscraper.ImageService;
 import com.lumata.lib.webscraper.ReadableResource;
+import com.lumata.lib.webscraper.Scraper;
 import com.lumata.lib.webscraper.ServiceLocator;
+import com.lumata.lib.webscraper.content.Feed;
 import com.lumata.lib.webscraper.content.Image;
+import com.lumata.lib.webscraper.content.WebContent;
 import com.lumata.lib.webscraper.content.Webpage;
 
 public class HtmlExtractorTest {
@@ -34,6 +40,7 @@ public class HtmlExtractorTest {
 
 	private HtmlExtractor ext;
 	private ServiceLocator serviceLocatorMock;
+	private Scraper scraperMock;
 
 	@Before
 	public void setup() throws IOException, HttpException {
@@ -112,16 +119,21 @@ public class HtmlExtractorTest {
 	public void extractPreviewUrlFromMeta() throws IOException, HttpException {
 
 		// meta link image
+		stubbScraping("http://web.com/myweb.png", new Image("http://web.com/myweb.png"), Image.class);
 		String html = "<html><head><meta/><link rel=\"image_src\" href=\"http://web.com/myweb.png\" /></head></html>";
 		Webpage content = (Webpage) ext.extractContent(createMockResource(TEST_URL, html), serviceLocatorMock);
 		assertEquals("http://web.com/myweb.png", content.getPreviewImage().getUrl());
 
 		// og:image
+		stubbScraping("http://ia.media-imdb.com/images/rock.jpg",
+				new Image("http://ia.media-imdb.com/images/rock.jpg"), Image.class);
 		html = "<html><head><meta property=\"og:image\" content=\"http://ia.media-imdb.com/images/rock.jpg\" /></head></html>";
 		content = (Webpage) ext.extractContent(createMockResource(TEST_URL, html), serviceLocatorMock);
 		assertEquals("http://ia.media-imdb.com/images/rock.jpg", content.getPreviewImage().getUrl());
 
 		// twitter:image
+		stubbScraping("http://ia.media-imdb.com/images/rock2.jpg", new Image(
+				"http://ia.media-imdb.com/images/rock2.jpg"), Image.class);
 		html = "<html><head><meta name=\"twitter:image\" content=\"http://ia.media-imdb.com/images/rock2.jpg\" /></head></html>";
 		content = (Webpage) ext.extractContent(createMockResource(TEST_URL, html), serviceLocatorMock);
 		assertEquals("http://ia.media-imdb.com/images/rock2.jpg", content.getPreviewImage().getUrl());
@@ -132,6 +144,30 @@ public class HtmlExtractorTest {
 		assertNull(content.getPreviewImage());
 	}
 
+	@Test
+	public void getRssFeedAddress() throws IOException, HttpException {
+		// rss and atom
+		String html = "<html><head><link rel=\"alternate\" type=\"application/rss+xml\" href=\"http://web.com/myweb.rss\" />"
+				+ "<link rel=\"alternate\" title=\"hey\" type=\"application/atom+xml\" href=\"http://web.com/myweb2.xml\" /></head></html>";
+		Webpage content = (Webpage) ext.extractContent(createMockResource(TEST_URL, html), serviceLocatorMock);
+
+		List<Feed> expected = new ArrayList<Feed>();
+		Feed feed1 = new Feed("http://web.com/myweb.rss");
+		expected.add(feed1);
+		Feed feed2 = new Feed("http://web.com/myweb2.xml");
+		feed2.setTitle("hey");
+		expected.add(feed2);
+
+		assertEquals(expected.size(), content.getFeeds().size());
+		assertTrue(content.getFeeds().containsAll(expected));
+
+		// empty feeds
+		html = "<html><head></head></html>";
+		content = (Webpage) ext.extractContent(createMockResource(TEST_URL, html), serviceLocatorMock);
+		assertNull(content.getFeeds());
+	}
+
+	/* --------------------------------- helper methods -- */
 	private ReadableResource createMockResource(String url, String content) throws IOException, HttpException {
 		ReadableResource resource = mock(ReadableResource.class);
 
@@ -150,11 +186,18 @@ public class HtmlExtractorTest {
 		when(imageMock.getImageFromUrl(Mockito.any(URL.class))).thenAnswer(new Answer<Image>() {
 			@Override
 			public Image answer(InvocationOnMock invocation) throws Throwable {
-				// TODO Auto-generated method stub
-				return null;
+				return new Image(((URL) invocation.getArguments()[0]).toExternalForm());
 			}
 		});
 		when(mock.getImageService()).thenReturn(imageMock);
+		scraperMock = mock(Scraper.class);
+		when(mock.getScraper()).thenReturn(scraperMock);
 		return mock;
+	}
+
+	private <E extends WebContent> void stubbScraping(String url, E mockedContent, Class<E> type) throws IOException,
+			HttpException {
+		when(scraperMock.extractContentFromUrl(url)).thenReturn(mockedContent);
+		when(scraperMock.extractContentFromUrl(url, type)).thenReturn(mockedContent);
 	}
 }

@@ -4,10 +4,7 @@
 package com.lumata.lib.webscraper.content;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import com.google.common.base.Objects;
 
 /**
  * @author Alexander De Leon - alexander.leon@lumatagroup.com
@@ -115,10 +112,9 @@ public class Webpage extends WebContent {
 
 	@Override
 	public String toString() {
-		return Objects.toStringHelper(this).omitNullValues().add("url", getUrl())
-				.add("aliasUrls", Arrays.toString(getAliasUrls())).add("title", title).add("description", description)
+		return toStringHelper(this).add("title", title).add("description", description)
 				.add("previewImage", previewImage).add("feeds", feeds).add("embeddedContent", embeddedContent)
-				.add("keywords", getKeywords()).toString();
+				.toString();
 	}
 
 }

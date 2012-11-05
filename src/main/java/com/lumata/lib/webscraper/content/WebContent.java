@@ -3,9 +3,11 @@
  */
 package com.lumata.lib.webscraper.content;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * A Web Content is an abstraction that describes (using metadata) the content of a web resource.
@@ -82,7 +84,12 @@ public abstract class WebContent {
 		}
 		WebContent that = (WebContent) obj;
 		return Objects.equal(this.url, that.url) && Objects.equal(this.getType(), that.getType())
-				&& Objects.equal(this.aliasUrls, that.aliasUrls) && Objects.equal(this.keywords, that.keywords);
+				&& Arrays.equals(this.aliasUrls, that.aliasUrls) && Objects.equal(this.keywords, that.keywords);
+	}
+
+	protected ToStringHelper toStringHelper(Object instance) {
+		return Objects.toStringHelper(this).omitNullValues().add("url", url)
+				.add("aliasUrls", Arrays.toString(aliasUrls)).add("keywords", keywords);
 	}
 
 }

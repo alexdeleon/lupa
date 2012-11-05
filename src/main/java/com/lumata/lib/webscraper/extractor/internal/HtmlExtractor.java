@@ -323,7 +323,10 @@ public class HtmlExtractor extends AbstractExtractor<WebContent> {
 			String url = item.absUrl("href");
 			if (StringUtils.isNotBlank(url)) {
 				Feed feedRef = new Feed(url);
-				feedRef.setTitle(item.attr("title"));
+				String title = item.attr("title");
+				if (StringUtils.isNotBlank(title)) {
+					feedRef.setTitle(title);
+				}
 				ret.add(feedRef);
 			}
 		}
