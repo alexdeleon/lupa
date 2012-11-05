@@ -72,7 +72,17 @@ public abstract class WebContent {
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(url);
+		return Objects.hashCode(url, getType());
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !(obj instanceof WebContent)) {
+			return false;
+		}
+		WebContent that = (WebContent) obj;
+		return Objects.equal(this.url, that.url) && Objects.equal(this.getType(), that.getType())
+				&& Objects.equal(this.aliasUrls, that.aliasUrls) && Objects.equal(this.keywords, that.keywords);
 	}
 
 }

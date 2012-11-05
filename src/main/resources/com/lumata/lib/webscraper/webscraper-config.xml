@@ -33,6 +33,14 @@
 	
 	<bean id="httpClient" factory-bean="httpClientFactory" factory-method="getHttpsThreadSafeClient" />
 	
-	<bean id="httpClientFactory" class="com.buongiorno.frog.lib.http.client.HttpsClientFactory" />
+	<bean id="httpClientFactory" class="com.buongiorno.frog.lib.http.client.HttpsClientFactory" >
+		<constructor-arg>
+			<bean class="com.buongiorno.frog.lib.http.client.HttpClientConfiguration">
+				<property name="connectionTimeoutInMillis" value="10000"/>
+				<property name="socketTimeoutInMillis" value="10000"/>
+				<property name="defaultlocale" value="en" />
+			</bean>
+		</constructor-arg>
+	</bean>
 
 </beans>

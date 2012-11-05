@@ -1,4 +1,5 @@
 import com.lumata.lib.webscraper.extractor.internal.HtmlExtractor;
+import com.lumata.lib.webscraper.extractor.internal.ImageExtractor;
 import com.lumata.lib.webscraper.extractor.internal.config.AbstractExtractorConfigurationModule;
 
 /*
@@ -15,5 +16,7 @@ class DefaultScraperConfig extends AbstractExtractorConfigurationModule {
    void configure(){
 	   when([type:'text/html'])
 			   .use(HtmlExtractor.class)
+	   when([type:'image/*'])
+			   .use(ImageExtractor.class)
    }
 }

@@ -63,6 +63,9 @@ public class HtmlExtractor extends AbstractExtractor<WebContent> {
 			Document doc = parseWithDeclaredCharset(resource);
 			return scrapDocument(doc, resource, serviceLocator.getScraper(), serviceLocator.getImageService());
 		} catch (RedirectDetected redirection) {
+			LOG.debug("An HTML declared redirection has been detected from {} to {}", resource.getUrl(),
+					redirection.redirectUrl);
+			// TODO can be use the same resource?
 			return serviceLocator.getScraper().extractContentFromUrl(redirection.redirectUrl);
 		}
 	}
@@ -82,6 +85,7 @@ public class HtmlExtractor extends AbstractExtractor<WebContent> {
 
 		// 2) detect encoding from HTTP headers or use default (UTF-8)
 		Charset httpCharset = getResourceCharsetOrDefaultCharset(resource);
+		LOG.debug("Initial charset (http header or default) for {} is {}", resource.getUrl(), httpCharset);
 
 		// 3) Read head section ahead
 		String headText = readHead(stream, httpCharset.name(), BUFFER_2KB);
@@ -89,6 +93,8 @@ public class HtmlExtractor extends AbstractExtractor<WebContent> {
 
 		// 4) Look for encodings declared on the HTML and use this one if found
 		Charset htmlCharset = getHtmlDeclaredCharset(headText);
+		LOG.debug("Final charset (after HTML charset extraction) used for parsing {} is {}", resource.getUrl(),
+				htmlCharset);
 		String encoding = htmlCharset != null ? htmlCharset.name() : httpCharset.name();
 
 		// 5) Detect any possible redirects declared on the HTML
@@ -170,13 +176,10 @@ public class HtmlExtractor extends AbstractExtractor<WebContent> {
 						.select(getConfigValue(CONFIG_CONTENT_SELECTOR, CONFIG_CONTENT_SELECTOR_DEFAULT));
 
 				// clean selected content
-				LOG.debug("content.size()=>{}", content.size());
 				content.select("script, noscript, style, ul").remove();
-				LOG.debug("content.size()=>{}", content.size());
 
 				content.select(getConfigValue(CONFIG_EXCLUDED_ELEMENTS, CONFIG_EXCLUDED_ELEMENTS_DEFAULT)).remove();
 				removeComments(body);
-				LOG.debug("content.size()=>{}", content.size());
 
 				// If no image found so far try find one form the HTML
 				if (webpage.getPreviewImage() == null) {
@@ -299,13 +302,15 @@ public class HtmlExtractor extends AbstractExtractor<WebContent> {
 	}
 
 	private String extractTitle(Element head) {
-		String title = "";
+		String title = null;
 		Elements titleTags = head.getElementsByTag("title");
 		if (!titleTags.isEmpty()) {
 			title = titleTags.text();
 		} else {
-			Elements metaTitle = head.select("meta[property=og:title]");
-			title = metaTitle.attr("content");
+			Elements metaTitle = head.select("meta[property=og:title],meta[name=twitter:title]");
+			if (!metaTitle.isEmpty()) {
+				title = metaTitle.attr("content");
+			}
 		}
 		return title;
 	}
@@ -326,12 +331,12 @@ public class HtmlExtractor extends AbstractExtractor<WebContent> {
 	}
 
 	private String extractDescriptionFromMeta(Element head) {
-		String description = "";
+		String description = null;
 		Elements metaDescription = head.select("meta[name=description]");
 		if (!metaDescription.isEmpty()) {
 			description = metaDescription.attr("content");
 		} else {
-			metaDescription = head.select("meta[property=og:description]");
+			metaDescription = head.select("meta[property=og:description],meta[name=twitter:description]");
 			if (!metaDescription.isEmpty()) {
 				description = metaDescription.attr("content");
 			}
@@ -340,12 +345,12 @@ public class HtmlExtractor extends AbstractExtractor<WebContent> {
 	}
 
 	private String extractPreviewUrlFromMeta(Element head) {
-		String previewUrl = "";
+		String previewUrl = null;
 		Elements metaImage = head.select("link[rel=image_src]");
 		if (!metaImage.isEmpty()) {
 			previewUrl = metaImage.first().absUrl("href");
 		} else {
-			metaImage = head.select("meta[property=og:image]");
+			metaImage = head.select("meta[property=og:image],meta[name=twitter:image]");
 			if (!metaImage.isEmpty() && StringUtils.isNotBlank(metaImage.attr("content"))) {
 				previewUrl = metaImage.first().absUrl("content");
 			}

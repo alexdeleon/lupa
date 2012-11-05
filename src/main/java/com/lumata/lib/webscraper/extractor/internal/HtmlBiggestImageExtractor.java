@@ -6,8 +6,10 @@ package com.lumata.lib.webscraper.extractor.internal;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -15,6 +17,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -23,7 +26,6 @@ import org.slf4j.LoggerFactory;
 
 import com.lumata.lib.webscraper.ImageService;
 import com.lumata.lib.webscraper.content.Image;
-import com.lumata.lib.webscraper.util.URLUtil;
 
 /**
  * @author Alexander De Leon - alexander.leon@lumatagroup.com
@@ -49,29 +51,23 @@ public class HtmlBiggestImageExtractor implements HtmlImageExtractor {
 
 	@Override
 	public Image extractBestImage(URL sourceUrl, Elements htmlSection, ImageExtractionRequirements requirements) {
-		Set<Image> imageUrls = new HashSet<Image>();
+		Map<String, Image> imagesToExplore = new HashMap<String, Image>();
 		Set<ImageDownloadTask> imagesToDownload = new HashSet<ImageDownloadTask>();
 		Iterator<org.jsoup.nodes.Element> it = htmlSection.iterator();
 
 		// collect valid images
-		while (it.hasNext() && imageUrls.size() < requirements.getMaxImagesToExplore()) {
+		while (it.hasNext() && imagesToExplore.size() < requirements.getMaxImagesToExplore()) {
 			Element imageElement = it.next();
-			String maybeAbsoluteImageUrl = imageElement.absUrl("src");
-			URL imageUrl = null;
-			try {
-				imageUrl = URLUtil.getAbsoluteUrl(sourceUrl, maybeAbsoluteImageUrl);
-			} catch (Exception e) {
-				LOG.warn("Invalid image URL: {}", maybeAbsoluteImageUrl);
-			}
+			String imageUrl = imageElement.absUrl("src");
 
 			// Do not process empty img tags, duplicated images or tracking
 			// pixels and other assorted ads
-			if (imageUrl == null || imageUrls.contains(imageUrl) || isTrackingPixelOrAd(imageUrl)) {
+			if (imageUrl == null || imagesToExplore.containsKey(imageUrl) || isTrackingPixelOrAd(imageUrl)) {
 				continue;
 			}
 
 			// remember this image
-			Image imageContent = new Image(imageUrl.toExternalForm());
+			Image imageContent = new Image(imageUrl);
 			if (imageElement.hasAttr(WIDTH_ATTRIBUTE)) {
 				// TODO: We need to convert other picture size units supported by html (there must be a lib for this)
 				imageContent.setWidth(Integer.parseInt(imageElement.attr(WIDTH_ATTRIBUTE).replace("px", "")));
@@ -82,22 +78,25 @@ public class HtmlBiggestImageExtractor implements HtmlImageExtractor {
 			if (imageContent.getWidth() == null || imageContent.getHeight() == null) {// mark image to download
 				imagesToDownload.add(new ImageDownloadTask(imageContent));
 			}
-			imageUrls.add(imageContent);
+			imagesToExplore.put(imageUrl, imageContent);
 		}
 
 		// if dimensions are empty -> download image
-		try {
-			ExecutorService pool = Executors.newFixedThreadPool(imagesToDownload.size(), getThreadFactory(sourceUrl));
-			pool.invokeAll(imagesToDownload);
-			pool.shutdown();
-		} catch (InterruptedException e) {
-			LOG.error("InterruptedException while downloading images", e);
+		if (CollectionUtils.isNotEmpty(imagesToDownload)) {
+			try {
+				ExecutorService pool = Executors.newFixedThreadPool(imagesToDownload.size(),
+						getThreadFactory(sourceUrl));
+				pool.invokeAll(imagesToDownload);
+				pool.shutdown();
+			} catch (InterruptedException e) {
+				LOG.error("InterruptedException while downloading images", e);
+			}
 		}
 
 		// select biggest image
 		Image biggestImage = null;
 		try {
-			biggestImage = Collections.max(imageUrls, new Comparator<Image>() {
+			biggestImage = Collections.max(imagesToExplore.values(), new Comparator<Image>() {
 				@Override
 				public int compare(Image o1, Image o2) {
 					return getSquarePixels(o1) - getSquarePixels(o2);
@@ -157,8 +156,8 @@ public class HtmlBiggestImageExtractor implements HtmlImageExtractor {
 		return width * height;
 	}
 
-	private boolean isTrackingPixelOrAd(URL imageUrl) {
-		return imageUrl.toExternalForm().contains("ad.doubleclick.net");
+	private boolean isTrackingPixelOrAd(String imageUrl) {
+		return imageUrl.contains("ad.doubleclick.net");
 	}
 
 }

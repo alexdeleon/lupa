@@ -35,6 +35,12 @@ public class ImageServiceImpl implements ImageService {
 	@Override
 	public Image getImageFromUrl(URL imageUrl) throws IOException, HttpException {
 		ReadableResource resource = httpService.getRawResource(imageUrl);
+		return getImageFromResource(resource);
+
+	}
+
+	@Override
+	public Image getImageFromResource(ReadableResource resource) throws IOException, HttpException {
 		// read before checking content type to avoid doing an HTTP HEAD.
 		InputStream imageStream = resource.read();
 
@@ -44,7 +50,7 @@ public class ImageServiceImpl implements ImageService {
 			return null;
 		}
 
-		Image imageMetadata = new Image(imageUrl.toExternalForm());
+		Image imageMetadata = new Image(resource.getUrl().toExternalForm());
 		populateImageDimensions(imageStream, imageMetadata);
 
 		resource.discard();

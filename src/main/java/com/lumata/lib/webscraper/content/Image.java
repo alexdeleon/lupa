@@ -3,6 +3,10 @@
  */
 package com.lumata.lib.webscraper.content;
 
+import java.util.Arrays;
+
+import com.google.common.base.Objects;
+
 /**
  * @author Alexander De Leon - alexander.leon@lumatagroup.com
  * 
@@ -50,4 +54,10 @@ public class Image extends WebContent {
 		return Type.IMAGE;
 	}
 
+	@Override
+	public String toString() {
+		return Objects.toStringHelper(this).omitNullValues().add("url", getUrl())
+				.add("aliasUrls", Arrays.toString(getAliasUrls())).add("with", width).add("height", height)
+				.add("keywords", getKeywords()).toString();
+	}
 }
