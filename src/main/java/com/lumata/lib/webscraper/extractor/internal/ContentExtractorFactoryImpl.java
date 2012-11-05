@@ -44,16 +44,22 @@ public class ContentExtractorFactoryImpl implements ContentExtractorFactory {
 
 		// Create the configuration matchers which are added to the sorted set in natural order.
 		for (ExtractorConfiguration configuration : configurations) {
+			LOG.debug("Loading configuration {}", configuration);
 			ContentExtractor<? extends WebContent> contentExtractor = instanciateAndConfigureContentExtractor(configuration);
 			if (contentExtractor != null) {
-				matchers.add(new ContentExtractorMatcher(contentExtractor, configuration.getConstraints(),
-						configuration.getPriority()));
+				if (!matchers.add(new ContentExtractorMatcher(contentExtractor, configuration.getConstraints(),
+						configuration.getPriority()))) {
+					LOG.warn("This should not happen! Found duplicated configuration {}", configuration);
+				}
+			} else {
+				LOG.warn("Failed to load webscraper configuration {}", configuration);
 			}
 		}
 
 		LOG.info("Extractors configurations loaded: found " + matchers.size());
 	}
 
+	@Override
 	public Optional<ContentExtractor<WebContent>> getExtractor(ReadableResource resource) {
 		return getExtractor(resource, null);
 	}
@@ -73,7 +79,6 @@ public class ContentExtractorFactoryImpl implements ContentExtractorFactory {
 	private ContentExtractor<? extends WebContent> instanciateAndConfigureContentExtractor(
 			ExtractorConfiguration configuration) {
 		try {
-			@SuppressWarnings("unchecked")
 			ContentExtractor<? extends WebContent> extractor = configuration.getExtractorClass().newInstance();
 			extractor.setConfiguration(configuration.getParameters());
 			return extractor;

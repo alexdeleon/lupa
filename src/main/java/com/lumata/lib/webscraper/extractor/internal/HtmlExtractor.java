@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.buongiorno.frog.lib.http.HttpException;
+import com.google.common.base.Optional;
 import com.google.common.net.MediaType;
 import com.lumata.lib.webscraper.ImageService;
 import com.lumata.lib.webscraper.ReadableResource;
@@ -92,10 +93,10 @@ public class HtmlExtractor extends AbstractExtractor<WebContent> {
 		stream.reset();
 
 		// 4) Look for encodings declared on the HTML and use this one if found
-		Charset htmlCharset = getHtmlDeclaredCharset(headText);
+		Charset effectiveCharset = getHtmlDeclaredCharset(headText).or(httpCharset);
 		LOG.debug("Final charset (after HTML charset extraction) used for parsing {} is {}", resource.getUrl(),
-				htmlCharset);
-		String encoding = htmlCharset != null ? htmlCharset.name() : httpCharset.name();
+				effectiveCharset);
+		String encoding = effectiveCharset != null ? effectiveCharset.name() : httpCharset.name();
 
 		// 5) Detect any possible redirects declared on the HTML
 		detectHtmlDeclaredRedirects(headText, encoding, resource.getUrl());
@@ -111,9 +112,9 @@ public class HtmlExtractor extends AbstractExtractor<WebContent> {
 		return resource.getContentType().or(MediaType.HTML_UTF_8).charset().or(Charset.forName(UTF8));
 	}
 
-	private Charset getHtmlDeclaredCharset(String head) throws IOException {
+	private Optional<Charset> getHtmlDeclaredCharset(String head) throws IOException {
 		HtmlEncodingDetector encodingDetector = new HtmlEncodingDetector();
-		return encodingDetector.detect(new ByteArrayInputStream(head.getBytes()), null);
+		return Optional.fromNullable(encodingDetector.detect(new ByteArrayInputStream(head.getBytes()), null));
 	}
 
 	private void detectHtmlDeclaredRedirects(String headText, String encoding, URL originalUrl) throws RedirectDetected {

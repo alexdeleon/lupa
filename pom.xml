@@ -59,6 +59,39 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>3.1</version>
 		</dependency>
+		<dependency>
+			<groupId>gdata-client</groupId>
+			<artifactId>gdata-client</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.gdata</groupId>
+			<artifactId>gdata-core</artifactId>
+			<version>1.47.0</version>
+		</dependency>
+		<dependency>
+			<groupId>gdata-youtube</groupId>
+			<artifactId>gdata-youtube</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>gdata-media</groupId>
+			<artifactId>gdata-media</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.mail</groupId>
+			<artifactId>javax.mail</artifactId>
+			<version>1.4.4</version>
+		</dependency>
 	</dependencies>
+	
+	
+	<repositories>
+	    <repository>
+	        <id>google</id>
+	        <url>http://maven.wso2.org/nexus/content/groups/public/</url>
+	    </repository>
+	</repositories>
 
 </project>

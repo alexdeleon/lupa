@@ -35,7 +35,7 @@ public abstract class AbstractExtractorConfigurationModule implements ExtractorC
 	protected class ConfigurationBuilder {
 		private final ExtractorConfiguration configuration = new ExtractorConfiguration();
 
-		public ConfigurationParametarizer use(Class<? extends ContentExtractor> c) {
+		public ConfigurationParametarizer use(Class<? extends ContentExtractor<?>> c) {
 			configuration.setExtractorClass(c);
 			configurations.add(configuration);
 			return new ConfigurationParametarizer(configuration);

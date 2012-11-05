@@ -5,11 +5,12 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import com.google.common.base.Objects;
 import com.lumata.lib.webscraper.extractor.ContentExtractor;
 
 public class ExtractorConfiguration {
 
-	private Class<? extends ContentExtractor> extractorClass;
+	private Class<? extends ContentExtractor<?>> extractorClass;
 	private Map<String, String> constraints = new HashMap<String, String>();
 	private Map<String, String> parameters;
 	private int priority;
@@ -18,7 +19,7 @@ public class ExtractorConfiguration {
 		super();
 	}
 
-	public ExtractorConfiguration(Class<? extends ContentExtractor> extractorClass, Map<String, String> constraints,
+	public ExtractorConfiguration(Class<? extends ContentExtractor<?>> extractorClass, Map<String, String> constraints,
 			Map<String, String> parameters, byte priority, boolean needsFetch) {
 		super();
 		this.extractorClass = extractorClass;
@@ -27,16 +28,16 @@ public class ExtractorConfiguration {
 		this.priority = priority;
 	}
 
-	public void setExtractorClass(Class<? extends ContentExtractor> extractorClass) {
+	public void setExtractorClass(Class<? extends ContentExtractor<?>> extractorClass) {
 		this.extractorClass = extractorClass;
 	}
 
-	public Class<? extends ContentExtractor> getExtractorClass() {
+	public Class<? extends ContentExtractor<?>> getExtractorClass() {
 		return extractorClass;
 	}
 
-	
-	public @Nonnull Map<String, String> getConstraints() {
+	public @Nonnull
+	Map<String, String> getConstraints() {
 		return constraints;
 	}
 
@@ -58,6 +59,12 @@ public class ExtractorConfiguration {
 
 	public void setPriority(int priority) {
 		this.priority = priority;
+	}
+
+	@Override
+	public String toString() {
+		return Objects.toStringHelper(this).omitNullValues().add("extractorClass", extractorClass)
+				.add("constraints", constraints).add("parameters", parameters).add("priority", priority).toString();
 	}
 
 }

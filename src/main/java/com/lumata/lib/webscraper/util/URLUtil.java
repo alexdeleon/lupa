@@ -8,9 +8,6 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 
@@ -19,8 +16,6 @@ import com.google.common.collect.Collections2;
  * 
  */
 public class URLUtil {
-
-	private static final Logger LOG = LoggerFactory.getLogger(URLUtil.class);
 
 	public static String asString(URL url) {
 		return url.toString();

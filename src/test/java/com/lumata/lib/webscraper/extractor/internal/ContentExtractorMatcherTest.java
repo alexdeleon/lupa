@@ -10,8 +10,6 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.lumata.lib.webscraper.extractor.internal.ContentExtractorMatcher;
-
 /**
  * @author Alexander De Leon - alexander.leon@lumatagroup.com
  * 
@@ -38,20 +36,20 @@ public class ContentExtractorMatcherTest {
 	}
 
 	@Test
-	public void testBothUrlAndSamePriorityIsEqual() {
-		ContentExtractorMatcher m1 = new ContentExtractorMatcher(null, map("url", "http://example1.com"), 0);
-		ContentExtractorMatcher m2 = new ContentExtractorMatcher(null, map("url", "http://example2.com"), 0);
-
-		assertTrue(isEqual(m2, m1));
-
-	}
-
-	@Test
 	public void testPriority() {
 		ContentExtractorMatcher m1 = new ContentExtractorMatcher(null, map("url", "http://example1.com"), 0);
 		ContentExtractorMatcher m2 = new ContentExtractorMatcher(null, map("url", "http://example2.com"), 1);
 
 		assertTrue(isGreaterThan(m1, m2));
+
+	}
+
+	@Test
+	public void testThatIsConsistentWithEquals() {
+		ContentExtractorMatcher m1 = new ContentExtractorMatcher(null, map("url", "http://example1.com"), 0);
+		ContentExtractorMatcher m2 = new ContentExtractorMatcher(null, map("url", "http://example1.com"), 0);
+
+		assertTrue(isEqual(m1, m2));
 
 	}
 

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.MapUtils;
 
+import com.google.common.base.Objects;
 import com.google.common.net.MediaType;
 import com.lumata.lib.webscraper.ReadableResource;
 import com.lumata.lib.webscraper.content.WebContent;
@@ -64,8 +65,11 @@ class ContentExtractorMatcher<E extends WebContent> implements
 		if (weightDifference != 0) {
 			return weightDifference;
 		}
-		return o.priority - priority;
-
+		int priorityDifference = o.priority - priority;
+		if (priorityDifference != 0) {
+			return priorityDifference;
+		}
+		return this.equals(o) ? 0 : 1;
 	}
 
 	private int getWeigth(Map<String, String> constraints) {
@@ -77,5 +81,20 @@ class ContentExtractorMatcher<E extends WebContent> implements
 			weight -= 2;
 		}
 		return weight;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(contentExtractor, constraints);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !(obj instanceof ContentExtractorMatcher)) {
+			return false;
+		}
+		ContentExtractorMatcher<?> that = (ContentExtractorMatcher<?>) obj;
+		return Objects.equal(this.contentExtractor, that.contentExtractor)
+				&& Objects.equal(this.constraints, that.constraints) && Objects.equal(this.priority, that.priority);
 	}
 }
