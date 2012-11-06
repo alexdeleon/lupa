@@ -1,7 +1,7 @@
 /*
  * 2012 copyright Lumata
  */
-package com.lumata.lib.webscraper.extractor.internal.webapi;
+package com.lumata.lib.webscraper.extractor.internal.service;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -33,9 +33,9 @@ import com.lumata.lib.webscraper.content.Video;
  * @author Alexander De Leon - alexander.leon@lumatagroup.com
  * 
  */
-public class YoutubeApi {
+public class YoutubeService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(YoutubeApi.class);
+	private static final Logger LOG = LoggerFactory.getLogger(YoutubeService.class);
 
 	private static final String BASE_URL = "http://gdata.youtube.com/";
 
@@ -44,7 +44,7 @@ public class YoutubeApi {
 	private final String developerKey;
 	private final String applicationName;
 
-	public YoutubeApi(String applicationName, String developerKey) {
+	public YoutubeService(String applicationName, String developerKey) {
 		this.applicationName = applicationName;
 		this.developerKey = developerKey;
 	}

@@ -176,6 +176,11 @@ public class HtmlExtractor extends AbstractExtractor<WebContent> {
 				Elements content = body
 						.select(getConfigValue(CONFIG_CONTENT_SELECTOR, CONFIG_CONTENT_SELECTOR_DEFAULT));
 
+				// If no content is selected use the entire body of the page.
+				if (content.isEmpty()) {
+					content = body.children();
+				}
+
 				// clean selected content
 				content.select("script, noscript, style, ul").remove();
 

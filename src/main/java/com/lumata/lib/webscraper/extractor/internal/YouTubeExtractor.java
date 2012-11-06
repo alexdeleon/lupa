@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.lumata.lib.webscraper.ReadableResource;
 import com.lumata.lib.webscraper.ServiceLocator;
 import com.lumata.lib.webscraper.content.Video;
-import com.lumata.lib.webscraper.extractor.internal.webapi.YoutubeApi;
+import com.lumata.lib.webscraper.extractor.internal.service.YoutubeService;
 
 public class YouTubeExtractor extends AbstractExtractor<Video> {
 
@@ -49,7 +49,7 @@ public class YouTubeExtractor extends AbstractExtractor<Video> {
 
 	private Video getContentFromChannelId(String channelId) {
 		LOG.debug("Getting from youtube featured video from channel id: {}", channelId);
-		YoutubeApi api = new YoutubeApi(getConfigValue(CONFIG_APP_NAME, CONFIG_APP_NAME_DEFAULT),
+		YoutubeService api = new YoutubeService(getConfigValue(CONFIG_APP_NAME, CONFIG_APP_NAME_DEFAULT),
 				getConfigValue(CONFIG_DEVELOPER_KEY));
 
 		return api.getFeatureVideFromUser(channelId);
@@ -57,7 +57,7 @@ public class YouTubeExtractor extends AbstractExtractor<Video> {
 
 	private Video getContentFromVideoId(String videoId) {
 		LOG.debug("Getting from youtube video with id: {}", videoId);
-		YoutubeApi api = new YoutubeApi(getConfigValue(CONFIG_APP_NAME, CONFIG_APP_NAME_DEFAULT),
+		YoutubeService api = new YoutubeService(getConfigValue(CONFIG_APP_NAME, CONFIG_APP_NAME_DEFAULT),
 				getConfigValue(CONFIG_DEVELOPER_KEY));
 		return api.getVideoAsContent(videoId);
 	}
