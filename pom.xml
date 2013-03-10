@@ -6,9 +6,10 @@
     <version>2.0.1</version>
   </parent>
   
-  <artifactId>web-scraper</artifactId>
+  <groupId>com.lumata.os</groupId>
+  <artifactId>lupa</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>web-scraper</name>
+  <name>lupa</name>
   <description>Web scraping library. Facilities to extraction of content from web URLs. </description>
 
 	<dependencies>
