@@ -1,16 +1,17 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.lumata.cd</groupId>
-    <artifactId>groovy-parent-pom</artifactId>
-    <version>2.0.1</version>
-  </parent>
-  
-  <groupId>com.lumata.os</groupId>
-  <artifactId>lupa</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>lupa</name>
-  <description>Web scraping library. Facilities to extraction of content from web URLs. </description>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.lumata.cd</groupId>
+		<artifactId>groovy-parent-pom</artifactId>
+		<version>2.0.1</version>
+	</parent>
+
+	<groupId>com.lumata.os</groupId>
+	<artifactId>lupa</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>lupa</name>
+	<description>Web scraping library. Facilities to extraction of content from web URLs. </description>
 
 	<dependencies>
 		<dependency>
@@ -23,7 +24,7 @@
 			<artifactId>http</artifactId>
 			<version>2.1.1</version>
 		</dependency>
-				<dependency>
+		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
 			<version>1.7.1</version>
@@ -86,13 +87,33 @@
 			<version>1.4.4</version>
 		</dependency>
 	</dependencies>
-	
-	
+
+
 	<repositories>
-	    <repository>
-	        <id>google</id>
-	        <url>http://maven.wso2.org/nexus/content/groups/public/</url>
-	    </repository>
+		<repository>
+			<id>google</id>
+			<url>http://maven.wso2.org/nexus/content/groups/public/</url>
+		</repository>
 	</repositories>
+
+
+	<build>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-jar-plugin</artifactId>
+			<configuration>
+				<archive>
+					<manifest>
+						<mainClass>com.lumata.lib.lupa.cli.Lupa</mainClass>
+						<packageName>com.lumata.lib.lupa.cli</packageName>
+					</manifest>
+					<manifestEntries>
+						<mode>development</mode>
+						<url>${pom.url}</url>
+					</manifestEntries>
+				</archive>
+			</configuration>
+		</plugin>
+	</build>
 
 </project>
