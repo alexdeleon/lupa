@@ -310,6 +310,33 @@
 					</execution>
 				</executions>
 			</plugin>
+			
+			<!-- antrun to give execution permission to executable, appassembler does 
+				not support it yet :( -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
+
+				<executions>
+					<execution>
+						<id>patch.executable</id>
+						<phase>package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<exec executable="chmod" dir="${project.build.directory}/appassembler/bin">
+									<arg value="a+x" />
+									<arg value="lupa" />
+								</exec>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.2.1</version>

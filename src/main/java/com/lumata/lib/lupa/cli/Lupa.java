@@ -3,6 +3,8 @@
  */
 package com.lumata.lib.lupa.cli;
 
+import java.io.PrintStream;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -63,7 +65,8 @@ public class Lupa {
 			LOG.debug("Executing scraper for URL {}", url);
 			try {
 				// TODO: serialize content to JSON or other specified formats
-				System.out.println(scraper.scrapContent(url));
+				PrintStream out = new PrintStream(System.out, true, "UTF-8");
+				out.println(scraper.scrapContent(url));
 			} catch (Exception e) {
 				LOG.error("Scraper failed to extract content for {}", url, e);
 				return 1;
