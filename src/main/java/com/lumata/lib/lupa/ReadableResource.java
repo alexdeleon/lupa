@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import com.buongiorno.frog.lib.http.HttpException;
 import com.google.common.base.Optional;
 import com.google.common.net.MediaType;
 
@@ -50,7 +49,7 @@ public interface ReadableResource {
 
 	Optional<MediaType> getContentType();
 
-	InputStream read() throws IOException, HttpException;
+	InputStream read() throws IOException;
 
 	void discard();
 }

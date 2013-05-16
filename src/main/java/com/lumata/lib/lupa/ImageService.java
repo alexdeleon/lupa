@@ -23,7 +23,6 @@ package com.lumata.lib.lupa;
 import java.io.IOException;
 import java.net.URL;
 
-import com.buongiorno.frog.lib.http.HttpException;
 import com.lumata.lib.lupa.content.Image;
 
 /**
@@ -42,7 +41,7 @@ public interface ImageService {
 	 *             if something goes wrong connecting to the image source.
 	 * @throws HttpException
 	 */
-	Image getImageFromUrl(URL imageUrl) throws IOException, HttpException;
+	Image getImageFromUrl(URL imageUrl) throws IOException;
 
 	/**
 	 * Extracts image metadata from the specified resource. If it is unable to determine that the given URL contains an
@@ -54,6 +53,6 @@ public interface ImageService {
 	 *             if something goes wrong connecting to the image source.
 	 * @throws HttpException
 	 */
-	Image getImageFromResource(ReadableResource resource) throws IOException, HttpException;
+	Image getImageFromResource(ReadableResource resource) throws IOException;
 
 }

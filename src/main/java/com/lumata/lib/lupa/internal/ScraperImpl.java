@@ -28,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.buongiorno.frog.lib.http.HttpException;
 import com.google.common.base.Optional;
 import com.lumata.lib.lupa.HttpService;
 import com.lumata.lib.lupa.ReadableResource;
@@ -56,24 +55,23 @@ public class ScraperImpl implements Scraper {
 	}
 
 	@Override
-	public WebContent scrapContent(String url) throws IOException, HttpException {
+	public WebContent scrapContent(String url) throws IOException {
 		return scrapContent(url, null);
 	}
 
 	@Override
-	public <E extends WebContent> E scrapContent(String url, Class<E> contentType) throws IOException, HttpException {
+	public <E extends WebContent> E scrapContent(String url, Class<E> contentType) throws IOException {
 		ReadableResource resource = createResource(url);
 		return scrapContent(resource, contentType);
 	}
 
 	@Override
-	public WebContent scrapContent(ReadableResource resource) throws IOException, HttpException {
+	public WebContent scrapContent(ReadableResource resource) throws IOException {
 		return scrapContent(resource, null);
 	}
 
 	@Override
-	public <E extends WebContent> E scrapContent(ReadableResource resource, Class<E> contentType) throws IOException,
-			HttpException {
+	public <E extends WebContent> E scrapContent(ReadableResource resource, Class<E> contentType) throws IOException {
 		try {
 			Optional<ContentExtractor<E>> extractor = getExtractor(resource, contentType);
 			if (extractor.isPresent()) {

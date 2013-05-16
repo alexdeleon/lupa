@@ -29,7 +29,6 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
-import com.buongiorno.frog.lib.http.HttpException;
 import com.google.common.net.MediaType;
 import com.lumata.lib.lupa.HttpService;
 import com.lumata.lib.lupa.ImageService;
@@ -50,14 +49,14 @@ public class ImageServiceImpl implements ImageService {
 	}
 
 	@Override
-	public Image getImageFromUrl(URL imageUrl) throws IOException, HttpException {
+	public Image getImageFromUrl(URL imageUrl) throws IOException {
 		ReadableResource resource = httpService.getRawResource(imageUrl);
 		return getImageFromResource(resource);
 
 	}
 
 	@Override
-	public Image getImageFromResource(ReadableResource resource) throws IOException, HttpException {
+	public Image getImageFromResource(ReadableResource resource) throws IOException {
 		// read before checking content type to avoid doing an HTTP HEAD.
 		InputStream imageStream = resource.read();
 

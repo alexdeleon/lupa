@@ -23,7 +23,6 @@ package com.lumata.lib.lupa.extractor;
 import java.io.IOException;
 import java.util.Map;
 
-import com.buongiorno.frog.lib.http.HttpException;
 import com.lumata.lib.lupa.ReadableResource;
 import com.lumata.lib.lupa.ServiceLocator;
 import com.lumata.lib.lupa.content.WebContent;
@@ -34,7 +33,7 @@ import com.lumata.lib.lupa.content.WebContent;
  */
 public interface ContentExtractor<E extends WebContent> {
 
-	E extractContent(ReadableResource resource, ServiceLocator serviceLocator) throws IOException, HttpException;
+	E extractContent(ReadableResource resource, ServiceLocator serviceLocator) throws IOException;
 
 	void setConfiguration(Map<String, String> config);
 

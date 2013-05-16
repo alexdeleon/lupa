@@ -7,11 +7,9 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.buongiorno.frog.lib.http.HttpException;
 import com.lumata.lib.lupa.ServiceLocator;
 import com.lumata.lib.lupa.content.WebContent;
 import com.lumata.lib.lupa.extractor.ContentExtractorFactory;
-import com.lumata.lib.lupa.internal.ScraperImpl;
 
 public class ScraperImplTest {
 
@@ -29,7 +27,7 @@ public class ScraperImplTest {
 	}
 
 	@Test
-	private void testScrapFromUrl() throws IOException, HttpException {
+	public void testScrapFromUrl() throws IOException {
 		WebContent content = scraper.scrapContent(TEST_URL);
 	}
 

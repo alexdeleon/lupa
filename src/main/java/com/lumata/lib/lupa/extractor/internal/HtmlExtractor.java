@@ -17,7 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.parser.html.HtmlEncodingDetector;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -26,7 +26,6 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.buongiorno.frog.lib.http.HttpException;
 import com.google.common.base.Optional;
 import com.google.common.net.MediaType;
 import com.lumata.lib.lupa.ImageService;
@@ -58,8 +57,7 @@ public class HtmlExtractor extends AbstractExtractor<WebContent> {
 	private static final String UTF8 = "utf8";
 
 	@Override
-	public WebContent extractContent(ReadableResource resource, ServiceLocator serviceLocator) throws IOException,
-			HttpException {
+	public WebContent extractContent(ReadableResource resource, ServiceLocator serviceLocator) throws IOException {
 		try {
 			Document doc = parseWithDeclaredCharset(resource);
 			return scrapDocument(doc, resource, serviceLocator.getScraper(), serviceLocator.getImageService());
@@ -77,8 +75,7 @@ public class HtmlExtractor extends AbstractExtractor<WebContent> {
 	}
 
 	/* -----helper methods ---------------------------------- */
-	private Document parseWithDeclaredCharset(ReadableResource resource) throws RedirectDetected, IOException,
-			HttpException {
+	private Document parseWithDeclaredCharset(ReadableResource resource) throws RedirectDetected, IOException {
 
 		// 1) Create a buffered stream to be able to read ahead
 		InputStream stream = new BufferedInputStream(resource.read());

@@ -33,7 +33,6 @@ import java.nio.charset.Charset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.buongiorno.frog.lib.http.HttpException;
 import com.google.common.base.Optional;
 import com.google.common.net.MediaType;
 import com.lumata.lib.lupa.ReadableResource;
@@ -77,12 +76,12 @@ public class TextReadableResourceDecorator implements TextReadableResource {
 	}
 
 	@Override
-	public InputStream read() throws IOException, HttpException {
+	public InputStream read() throws IOException {
 		return getBufferedInputStream();
 	}
 
 	@Override
-	public Reader readAsText() throws IOException, HttpException {
+	public Reader readAsText() throws IOException {
 		Optional<String> inferEncoding = inferEncoding();
 		try {
 			if (inferEncoding.isPresent()) {
@@ -96,7 +95,7 @@ public class TextReadableResourceDecorator implements TextReadableResource {
 	}
 
 	@Override
-	public Reader readAsText(Charset charset) throws IOException, HttpException {
+	public Reader readAsText(Charset charset) throws IOException {
 		LOG.debug("Reading {} using encoding {}", getUrl(), charset);
 		try {
 			return new InputStreamReader(read(), charset.name());
@@ -111,7 +110,7 @@ public class TextReadableResourceDecorator implements TextReadableResource {
 		resource.discard();
 	}
 
-	private Optional<String> inferEncoding() throws IOException, HttpException {
+	private Optional<String> inferEncoding() throws IOException {
 		Optional<MediaType> possibleMediaType = getContentType();
 		if (possibleMediaType.isPresent()) {
 			LOG.debug("Inferting encoding of {} from returned content type", getUrl());
@@ -131,7 +130,7 @@ public class TextReadableResourceDecorator implements TextReadableResource {
 		return Optional.fromNullable(guestEncoding);
 	}
 
-	private InputStream getBufferedInputStream() throws IOException, HttpException {
+	private InputStream getBufferedInputStream() throws IOException {
 		if (bufferedInputStream == null) {
 			InputStream originalStream = resource.read();
 			if (originalStream.markSupported()) {

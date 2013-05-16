@@ -24,7 +24,6 @@ import java.io.IOException;
 
 import org.springframework.stereotype.Service;
 
-import com.buongiorno.frog.lib.http.HttpException;
 import com.lumata.lib.lupa.content.WebContent;
 
 /**
@@ -47,7 +46,7 @@ public interface Scraper {
 	 *             is an IO error occurs while connecting to the URL.
 	 * @throws HttpException
 	 */
-	WebContent scrapContent(String url) throws IOException, HttpException;
+	WebContent scrapContent(String url) throws IOException;
 
 	/**
 	 * Extract the list of structured contents from the given URL.
@@ -60,7 +59,7 @@ public interface Scraper {
 	 *             is an IO error occurs while connecting to the URL.
 	 * @throws HttpException
 	 */
-	<E extends WebContent> E scrapContent(String url, Class<E> contentType) throws IOException, HttpException;
+	<E extends WebContent> E scrapContent(String url, Class<E> contentType) throws IOException;
 
 	/**
 	 * Extract the list of structured contents from the given URL.
@@ -73,7 +72,7 @@ public interface Scraper {
 	 *             is an IO error occurs while connecting to the URL.
 	 * @throws HttpException
 	 */
-	WebContent scrapContent(ReadableResource resource) throws IOException, HttpException;
+	WebContent scrapContent(ReadableResource resource) throws IOException;
 
 	/**
 	 * Extract the list of structured contents from the given URL.
@@ -86,7 +85,6 @@ public interface Scraper {
 	 *             is an IO error occurs while connecting to the URL.
 	 * @throws HttpException
 	 */
-	<E extends WebContent> E scrapContent(ReadableResource resource, Class<E> contentType) throws IOException,
-			HttpException;
+	<E extends WebContent> E scrapContent(ReadableResource resource, Class<E> contentType) throws IOException;
 
 }

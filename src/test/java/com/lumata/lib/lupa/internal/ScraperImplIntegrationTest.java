@@ -38,7 +38,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.buongiorno.frog.lib.http.HttpException;
 import com.lumata.lib.lupa.Scraper;
 import com.lumata.lib.lupa.content.WebContent;
 import com.lumata.lib.lupa.content.Webpage;
@@ -58,14 +57,14 @@ public class ScraperImplIntegrationTest {
 	Scraper scraper;
 
 	@Test
-	public void testVogue() throws IOException, HttpException {
+	public void testVogue() throws IOException {
 		String url = "http://www.vogue.co.jp/collection";
 		LOG.info("Result from scraper: {}", scraper.scrapContent(url));
 
 	}
 
 	@Test
-	public void testTwiterUrl() throws IOException, HttpException {
+	public void testTwiterUrl() throws IOException {
 		String url = "http://t.co/QMDccPr3";
 		WebContent webpage = scraper.scrapContent(url);
 		assertEquals("http://www.bbc.co.uk/news/science-environment-17013285", webpage.getUrl());
@@ -73,7 +72,7 @@ public class ScraperImplIntegrationTest {
 	}
 
 	@Test
-	public void testPageWithVideo() throws IOException, HttpException {
+	public void testPageWithVideo() throws IOException {
 		String url = "http://mashable.com/2012/11/05/tesla-coil-fight/";
 		Webpage webpage = (Webpage) scraper.scrapContent(url);
 		assertTrue(CollectionUtils.isNotEmpty(webpage.getEmbeddedContent()));
@@ -82,7 +81,7 @@ public class ScraperImplIntegrationTest {
 
 	@Ignore("TODO: we need be able to extract CSS imges in other to get this working")
 	@Test
-	public void testGoogleLogoExtraction() throws IOException, HttpException {
+	public void testGoogleLogoExtraction() throws IOException {
 		String url = "http://www.google.com";
 		Webpage webpage = (Webpage) scraper.scrapContent(url);
 		System.out.println(webpage);
@@ -91,7 +90,7 @@ public class ScraperImplIntegrationTest {
 	}
 
 	@Test
-	public void test1MLoad() throws IOException, HttpException {
+	public void test1MLoad() throws IOException {
 		BufferedReader reader = createReader();
 		String url = null;
 		while ((url = reader.readLine()) != null) {
